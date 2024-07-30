@@ -16,6 +16,12 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
 
+  // Check if event or organizer is missing
+  if (!event || !event.organizer) {
+    console.error('Invalid event data:', event);
+    return null;
+  }
+
   const isEventCreator = userId === event.organizer._id.toString();
 
   return (
@@ -50,7 +56,7 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
         </div>}
 
         <p className="p-medium-16 p-medium-18 text-grey-500">
-          {formatDateTime(event.startDateTime).dateTime}
+          {formatDateTime(event.startDateTime).dateTime || 'Invalid date'}
         </p>
 
         <Link href={`/events/${event._id}`}>
@@ -59,7 +65,7 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
         <div className="flex-between w-full">
           <p className="p-medium-14 md:p-medium-16 text-grey-600">
-            {event.organizer.firstName} {event.organizer.lastName}
+            {event.organizer?.firstName} {event.organizer?.lastName}
           </p>
 
           {hasOrderLink && (
